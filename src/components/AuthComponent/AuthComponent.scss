@@ -1,0 +1,17 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+.auth-form__remember-me-input {
+   vertical-align: middle;
+}
+
+.auth-form__submit-button {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  &:hover {
+    cursor: pointer;
+  }
+}
