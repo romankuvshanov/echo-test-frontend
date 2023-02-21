@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./ResetPasswordComponent.scss";
+import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 
 export default function ResetPasswordComponent() {
-  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
   const [firstStepDoneSuccessfully, setFirstStepDoneSuccessfully] =
     useState(false);
   const [secondStepDoneSuccessfully, setSecondStepDoneSuccessfully] =
@@ -14,51 +15,61 @@ export default function ResetPasswordComponent() {
   const [password, setPassword] = useState("");
   async function handleForgotStart(event) {
     event.preventDefault();
-    let response = await fetch(
-      "https://backend-front-test.dev.echo-company.ru/api/user/forgot-start",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ phone: phone }),
-      }
-    );
 
-    if (response.ok) {
-      setHasError(false);
-      setFirstStepDoneSuccessfully(true);
+    try {
+      let response = await fetch(
+        "https://backend-front-test.dev.echo-company.ru/api/user/forgot-start",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone: phone }),
+        }
+      );
+
       let result = await response.json();
-      console.log(result);
-    } else {
-      setHasError(true);
+      if (response.ok) {
+        setError(null);
+        setFirstStepDoneSuccessfully(true);
+        console.log(result);
+      } else {
+        setError(new Error(result?.message));
+      }
+    } catch (error) {
+      setError(error);
     }
   }
 
   async function handleForgotEnd(event) {
     event.preventDefault();
-    let response = await fetch(
-      "https://backend-front-test.dev.echo-company.ru/api/user/forgot-end",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: phone,
-          code: smsPassword,
-          password: password,
-        }),
-      }
-    );
 
-    if (response.ok) {
-      setHasError(false);
-      setSecondStepDoneSuccessfully(true);
+    try {
+      let response = await fetch(
+        "https://backend-front-test.dev.echo-company.ru/api/user/forgot-end",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: phone,
+            code: smsPassword,
+            password: password,
+          }),
+        }
+      );
+
       let result = await response.json();
-      console.log(result);
-    } else {
-      setHasError(true);
+      if (response.ok) {
+        setError(null);
+        setSecondStepDoneSuccessfully(true);
+        console.log(result);
+      } else {
+        setError(new Error(result?.message));
+      }
+    } catch (error) {
+      setError(error);
     }
   }
 
@@ -66,7 +77,10 @@ export default function ResetPasswordComponent() {
     <BlockContainerComponent>
       <h1>Reset password</h1>
 
-      {firstStepDoneSuccessfully ? (
+      {/*TODO: Сделать чище и понятнее*/}
+      {error ? (
+        <ErrorComponent error={error}></ErrorComponent>
+      ) : firstStepDoneSuccessfully ? (
         secondStepDoneSuccessfully ? (
           <p>Password changed successfully</p>
         ) : (

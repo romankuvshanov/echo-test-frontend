@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 
 export default function PersonalAccountComponent({ name }) {
-  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
   const [userName, setUserName] = useState("Name");
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -12,24 +12,35 @@ export default function PersonalAccountComponent({ name }) {
   console.log(state);
 
   useEffect(() => {
-    if (state) {
-      fetch("https://backend-front-test.dev.echo-company.ru/api/user", {
-        method: "GET",
-        headers: {
-          Authorization: state?.result?.token,
-        },
-      })
-        .then((response) => {
-          if (response.ok) return response.json();
+    try {
+      if (state) {
+        fetch("https://backend-front-test.dev.echo-company.ru/api/user", {
+          method: "GET",
+          headers: {
+            Authorization: state?.result?.token,
+          },
         })
-        .then((result) => {
-          console.log("RES" + result);
-          console.log(`${result?.first_name} ${result?.last_name}`);
-          setUserName(`${result?.first_name} ${result?.last_name}`);
-        })
-        .catch((error) => {
-          setHasError(true);
-        });
+          .then((response) => {
+            if (response.ok) return response.json();
+            else {
+              response.json().then((result) => {
+                setError(new Error(result?.message));
+                return result;
+              });
+            }
+          })
+          .then((result) => {
+            console.log("RES" + result);
+            console.log(`${result?.first_name} ${result?.last_name}`);
+            setUserName(`${result?.first_name} ${result?.last_name}`);
+            setError(null);
+          })
+          .catch((error) => {
+            setError(error);
+          });
+      }
+    } catch (error) {
+      setError(error);
     }
   }, [state]);
 
@@ -40,8 +51,8 @@ export default function PersonalAccountComponent({ name }) {
   return (
     <div>
       <BlockContainerComponent>
-        {hasError ? (
-          <ErrorComponent></ErrorComponent>
+        {error ? (
+          <ErrorComponent error={error}></ErrorComponent>
         ) : (
           <h1>Hello, {userName}!</h1>
         )}
