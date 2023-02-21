@@ -2,15 +2,18 @@ import { Link } from "react-router-dom";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./ResetPasswordComponent.scss";
 import { useState } from "react";
-// TODO: Две формы
 
 export default function ResetPasswordComponent() {
   const [hasError, setHasError] = useState(false);
-  const [firstStepDone, setFirstStepDone] = useState(false);
+  const [firstStepDoneSuccessfully, setFirstStepDoneSuccessfully] =
+    useState(false);
+  const [secondStepDoneSuccessfully, setSecondStepDoneSuccessfully] =
+    useState(false);
   const [phone, setPhone] = useState("");
   const [smsPassword, setSmsPassword] = useState("");
   const [password, setPassword] = useState("");
   async function handleForgotStart(event) {
+    event.preventDefault();
     let response = await fetch(
       "https://backend-front-test.dev.echo-company.ru/api/user/forgot-start",
       {
@@ -24,7 +27,7 @@ export default function ResetPasswordComponent() {
 
     if (response.ok) {
       setHasError(false);
-      setFirstStepDone(true);
+      setFirstStepDoneSuccessfully(true);
       let result = await response.json();
       console.log(result);
     } else {
@@ -33,6 +36,7 @@ export default function ResetPasswordComponent() {
   }
 
   async function handleForgotEnd(event) {
+    event.preventDefault();
     let response = await fetch(
       "https://backend-front-test.dev.echo-company.ru/api/user/forgot-end",
       {
@@ -50,6 +54,7 @@ export default function ResetPasswordComponent() {
 
     if (response.ok) {
       setHasError(false);
+      setSecondStepDoneSuccessfully(true);
       let result = await response.json();
       console.log(result);
     } else {
@@ -60,111 +65,104 @@ export default function ResetPasswordComponent() {
   return (
     <BlockContainerComponent>
       <h1>Reset password</h1>
-      <form className={"reset-password-form"}>
-        <label htmlFor={"phone-input"}>Enter your phone first: </label>
-        <input
-          id={"phone-input"}
-          type={"tel"}
-          placeholder={"79999999999"}
-          pattern={"7(\\d\\D*){10}"}
-          maxLength={11}
-          title={"Enter the phone in the following format: 7xxxxxxxxxx"}
-          required={true}
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+
+      {firstStepDoneSuccessfully ? (
+        secondStepDoneSuccessfully ? (
+          <p>Password changed successfully</p>
+        ) : (
+          <ResetPasswordEndFormContent
+            smsPassword={smsPassword}
+            onSmsPasswordInputChange={(e) => setSmsPassword(e.target.value)}
+            password={password}
+            onPasswordInputChange={(e) => setPassword(e.target.value)}
+            handleForgotEnd={handleForgotEnd}
+          />
+        )
+      ) : (
+        <ResetPasswordStartFormContent
+          phone={phone}
+          onPhoneInputChange={(e) => setPhone(e.target.value)}
+          handleForgotStart={handleForgotStart}
         />
-        <button
-          className={"reset-password-form__submit-button"}
-          onClick={handleForgotStart}
-        >
-          Reset
-        </button>
-        {firstStepDone && <p>Код подтверждения отправлен на телефон</p>}
-        <label htmlFor={"sms-password-input"}>One-time SMS password: </label>
-        <input
-          id={"sms-password-input"}
-          type={"text"}
-          value={smsPassword}
-          onChange={(e) => setSmsPassword(e.target.value)}
-          required={true}
-        />
-        <label htmlFor={"new-password-input"}>New password: </label>
-        <input
-          id={"new-password-input"}
-          type={"password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required={true}
-        />
-        <button
-          className={"reset-password-form__submit-button"}
-          onClick={handleForgotEnd}
-          type={"button"}
-        >
-          Confirm
-        </button>
-        <Link className={"reset-password-form__first-link"} to={"/"}>
-          Remembered your password?
-        </Link>
-        <Link to={"/signup"}>Registration</Link>
-      </form>
+      )}
     </BlockContainerComponent>
   );
+}
 
-  function ResetPasswordStartFormContent() {
-    return (
-      <>
-        <label htmlFor={"phone-input"}>Enter your phone first: </label>
-        <input
-          id={"phone-input"}
-          type={"tel"}
-          placeholder={"79999999999"}
-          pattern={"7(\\d\\D*){10}"}
-          maxLength={11}
-          title={"Enter the phone in the following format: 7xxxxxxxxxx"}
-          required={true}
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <button
-          className={"reset-password-form__submit-button"}
-          onClick={handleForgotStart}
-          type={"submit"}
-        >
-          Reset
-        </button>
-      </>
-    );
-  }
+function ResetPasswordStartFormContent({
+  phone,
+  onPhoneInputChange,
+  handleForgotStart,
+}) {
+  return (
+    <form
+      className={"reset-password-form"}
+      onSubmit={(e) => handleForgotStart(e)}
+    >
+      <label htmlFor={"phone-input"}>Enter your phone first: </label>
+      <input
+        id={"phone-input"}
+        type={"tel"}
+        placeholder={"79999999999"}
+        pattern={"7(\\d\\D*){10}"}
+        maxLength={11}
+        title={"Enter the phone in the following format: 7xxxxxxxxxx"}
+        required={true}
+        value={phone}
+        onChange={onPhoneInputChange}
+      />
+      <button className={"reset-password-form__submit-button"} type={"submit"}>
+        Reset
+      </button>
+      <FormLinks></FormLinks>
+    </form>
+  );
+}
 
-  function ResetPasswordEndFormContent() {
-    return (
-      <>
-        {firstStepDone && <p>Код подтверждения отправлен на телефон</p>}
-        <label htmlFor={"sms-password-input"}>One-time SMS password: </label>
-        <input
-          id={"sms-password-input"}
-          type={"text"}
-          value={smsPassword}
-          onChange={(e) => setSmsPassword(e.target.value)}
-          required={true}
-        />
-        <label htmlFor={"new-password-input"}>New password: </label>
-        <input
-          id={"new-password-input"}
-          type={"password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required={true}
-        />
-        <button
-          className={"reset-password-form__submit-button"}
-          onClick={handleForgotEnd}
-          type={"submit"}
-        >
-          Confirm
-        </button>
-      </>
-    );
-  }
+function ResetPasswordEndFormContent({
+  smsPassword,
+  onSmsPasswordInputChange,
+  password,
+  onPasswordInputChange,
+  handleForgotEnd,
+}) {
+  return (
+    <form
+      className={"reset-password-form"}
+      onSubmit={(e) => handleForgotEnd(e)}
+    >
+      <p>Код подтверждения отправлен на телефон</p>
+      <label htmlFor={"sms-password-input"}>One-time SMS password: </label>
+      <input
+        id={"sms-password-input"}
+        type={"text"}
+        value={smsPassword}
+        onChange={onSmsPasswordInputChange}
+        required={true}
+      />
+      <label htmlFor={"new-password-input"}>New password: </label>
+      <input
+        id={"new-password-input"}
+        type={"password"}
+        value={password}
+        onChange={onPasswordInputChange}
+        required={true}
+      />
+      <button className={"reset-password-form__submit-button"} type={"submit"}>
+        Confirm
+      </button>
+      <FormLinks></FormLinks>
+    </form>
+  );
+}
+
+function FormLinks() {
+  return (
+    <>
+      <Link className={"reset-password-form__first-link"} to={"/"}>
+        Remembered your password?
+      </Link>
+      <Link to={"/signup"}>Registration</Link>
+    </>
+  );
 }
