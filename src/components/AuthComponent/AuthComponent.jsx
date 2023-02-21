@@ -1,15 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./AuthComponent.scss";
+import { useState } from "react";
 
 export default function AuthComponent() {
+  const [hasError, setHasError] = useState(false);
+  const navigate = useNavigate();
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    let response = await fetch(
+      "https://backend-front-test.dev.echo-company.ru/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Object.fromEntries(formData)),
+      }
+    );
+
+    if (response.ok) {
+      let result = await response.json();
+      console.log(result);
+      navigate("/personal", {
+        replace: true,
+        state: { result: result },
+      });
+    } else {
+    }
+  }
+
   return (
     <BlockContainerComponent>
       <h1>Authorization</h1>
-      <form className={"auth-form"}>
+      <form className={"auth-form"} onSubmit={handleSubmit}>
         <label htmlFor={"phone-input"}>Phone: </label>
         <input
           id={"phone-input"}
+          name={"phone"}
           type={"tel"}
           placeholder={"79999999999"}
           pattern={"7(\\d\\D*){10}"}
@@ -17,7 +47,12 @@ export default function AuthComponent() {
           required={true}
         />
         <label htmlFor={"password-input"}>Password: </label>
-        <input id={"password-input"} type={"password"} required={true} />
+        <input
+          id={"password-input"}
+          name={"password"}
+          type={"password"}
+          required={true}
+        />
         <div>
           <label htmlFor={"remember-me-input"}>Remember me:</label>
           <input
@@ -35,3 +70,5 @@ export default function AuthComponent() {
     </BlockContainerComponent>
   );
 }
+
+function FormContent() {}
