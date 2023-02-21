@@ -3,10 +3,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
+import { useDispatch } from "react-redux";
+import { update } from "../../features/token/tokenSlice";
 
 export default function AuthComponent() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -19,7 +22,10 @@ export default function AuthComponent() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(Object.fromEntries(formData)),
+          body: JSON.stringify({
+            phone: formData.get("phone"),
+            password: formData.get("password"),
+          }),
         }
       );
 
@@ -27,6 +33,10 @@ export default function AuthComponent() {
       if (response.ok) {
         setError(null);
         console.log(result);
+        console.log(result?.token);
+        if (formData.get("remember-me-input"))
+          localStorage.setItem("token", result?.token);
+        dispatch(update(result?.token));
         navigate("/personal", {
           replace: true,
           state: { result: result },
@@ -78,6 +88,7 @@ function AuthFormContent({ onSubmit }) {
         <input
           className={"auth-form__remember-me-input"}
           id={"remember-me-input"}
+          name={"remember-me-input"}
           type={"checkbox"}
         />
       </div>

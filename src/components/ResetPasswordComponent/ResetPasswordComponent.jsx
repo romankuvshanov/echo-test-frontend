@@ -3,6 +3,8 @@ import { useState } from "react";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./ResetPasswordComponent.scss";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
+import { useDispatch } from "react-redux";
+import { clear } from "../../features/token/tokenSlice";
 
 export default function ResetPasswordComponent() {
   const [error, setError] = useState(null);
@@ -13,6 +15,7 @@ export default function ResetPasswordComponent() {
   const [phone, setPhone] = useState("");
   const [smsPassword, setSmsPassword] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   async function handleForgotStart(event) {
     event.preventDefault();
 
@@ -64,6 +67,7 @@ export default function ResetPasswordComponent() {
       if (response.ok) {
         setError(null);
         setSecondStepDoneSuccessfully(true);
+        dispatch(clear());
         console.log(result);
       } else {
         setError(new Error(result?.message));
@@ -82,7 +86,10 @@ export default function ResetPasswordComponent() {
         <ErrorComponent error={error}></ErrorComponent>
       ) : firstStepDoneSuccessfully ? (
         secondStepDoneSuccessfully ? (
-          <p>Password changed successfully</p>
+          <>
+            <p>Password changed successfully</p>
+            <Link to={"/"}>Login</Link>
+          </>
         ) : (
           <ResetPasswordEndFormContent
             smsPassword={smsPassword}
@@ -146,7 +153,7 @@ function ResetPasswordEndFormContent({
       className={"reset-password-form"}
       onSubmit={(e) => handleForgotEnd(e)}
     >
-      <p>Код подтверждения отправлен на телефон</p>
+      <p>The one-time sms password has been sent to your phone</p>
       <label htmlFor={"sms-password-input"}>One-time SMS password: </label>
       <input
         id={"sms-password-input"}

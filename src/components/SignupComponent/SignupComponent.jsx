@@ -2,11 +2,14 @@ import BlockContainerComponent from "../reusableComponents/BlockContainerCompone
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { update } from "../../features/token/tokenSlice";
 import "./SignupComponent.scss";
 
 export default function SignupComponent() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -28,7 +31,7 @@ export default function SignupComponent() {
       let result = await response.json();
       if (response.ok) {
         setError(null);
-
+        dispatch(update(result?.token));
         console.log(result);
         navigate("/personal", {
           replace: true,
