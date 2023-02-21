@@ -1,12 +1,13 @@
 import "./ErrorComponent.scss";
 
-export default function ErrorComponent({ errorMessage }) {
+export default function ErrorComponent({ error }) {
   return (
     <>
       <h2 className={"error-headline"}>Something went wrong!</h2>
-      <p>{errorMessage}</p>
+      <p>Please, reload the page and try again</p>
+      <p>{error.message}</p>
     </>
   );
 }
 
-ErrorComponent.defaultProps = { errorMessage: "" };
+ErrorComponent.defaultProps = { errorMessage: new Error() };

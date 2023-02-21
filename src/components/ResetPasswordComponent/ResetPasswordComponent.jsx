@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./ResetPasswordComponent.scss";
-import { useState } from "react";
 
 export default function ResetPasswordComponent() {
   const [hasError, setHasError] = useState(false);
@@ -105,6 +105,7 @@ function ResetPasswordStartFormContent({
         type={"tel"}
         placeholder={"79999999999"}
         pattern={"7(\\d\\D*){10}"}
+        minLength={11}
         maxLength={11}
         title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}

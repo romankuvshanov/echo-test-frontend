@@ -34,7 +34,7 @@ export default function PersonalAccountComponent({ name }) {
   }, [state]);
 
   function handleClick() {
-    navigate("/");
+    navigate("/", { replace: true });
   }
 
   return (

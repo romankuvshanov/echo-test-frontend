@@ -1,7 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
-import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./AuthComponent.scss";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 
 export default function AuthComponent() {
@@ -57,6 +57,8 @@ function AuthFormContent({ onSubmit }) {
         type={"tel"}
         placeholder={"79999999999"}
         pattern={"7(\\d\\D*){10}"}
+        minLength={11}
+        maxLength={11}
         title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
       />
