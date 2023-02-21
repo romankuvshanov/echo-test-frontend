@@ -127,7 +127,7 @@ function ResetPasswordStartFormContent({
         onChange={onPhoneInputChange}
       />
       <button className={"reset-password-form__submit-button"} type={"submit"}>
-        Reset
+        Send SMS with one-time password
       </button>
       <FormLinks></FormLinks>
     </form>
