@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./AuthComponent.scss";
 import { useState } from "react";
+import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 
 export default function AuthComponent() {
   const [hasError, setHasError] = useState(false);
@@ -22,6 +23,7 @@ export default function AuthComponent() {
     );
 
     if (response.ok) {
+      setHasError(false);
       let result = await response.json();
       console.log(result);
       navigate("/personal", {
@@ -29,46 +31,55 @@ export default function AuthComponent() {
         state: { result: result },
       });
     } else {
+      setHasError(true);
     }
   }
 
   return (
     <BlockContainerComponent>
       <h1>Authorization</h1>
-      <form className={"auth-form"} onSubmit={handleSubmit}>
-        <label htmlFor={"phone-input"}>Phone: </label>
-        <input
-          id={"phone-input"}
-          name={"phone"}
-          type={"tel"}
-          placeholder={"79999999999"}
-          pattern={"7(\\d\\D*){10}"}
-          title={"Enter the phone in the following format: 7xxxxxxxxxx"}
-          required={true}
-        />
-        <label htmlFor={"password-input"}>Password: </label>
-        <input
-          id={"password-input"}
-          name={"password"}
-          type={"password"}
-          required={true}
-        />
-        <div>
-          <label htmlFor={"remember-me-input"}>Remember me:</label>
-          <input
-            className={"auth-form__remember-me-input"}
-            id={"remember-me-input"}
-            type={"checkbox"}
-          />
-        </div>
-        <Link to={"/reset"}>Forgot your password?</Link>
-        <Link to={"/signup"}>Registration</Link>
-        <button className={"auth-form__submit-button"} type={"submit"}>
-          Sign in
-        </button>
-      </form>
+      {hasError ? (
+        <ErrorComponent></ErrorComponent>
+      ) : (
+        <AuthFormContent onSubmit={handleSubmit}></AuthFormContent>
+      )}
     </BlockContainerComponent>
   );
 }
 
-function FormContent() {}
+function AuthFormContent({ onSubmit }) {
+  return (
+    <form className={"auth-form"} onSubmit={onSubmit}>
+      <label htmlFor={"phone-input"}>Phone: </label>
+      <input
+        id={"phone-input"}
+        name={"phone"}
+        type={"tel"}
+        placeholder={"79999999999"}
+        pattern={"7(\\d\\D*){10}"}
+        title={"Enter the phone in the following format: 7xxxxxxxxxx"}
+        required={true}
+      />
+      <label htmlFor={"password-input"}>Password: </label>
+      <input
+        id={"password-input"}
+        name={"password"}
+        type={"password"}
+        required={true}
+      />
+      <div>
+        <label htmlFor={"remember-me-input"}>Remember me:</label>
+        <input
+          className={"auth-form__remember-me-input"}
+          id={"remember-me-input"}
+          type={"checkbox"}
+        />
+      </div>
+      <Link to={"/reset"}>Forgot your password?</Link>
+      <Link to={"/signup"}>Registration</Link>
+      <button className={"auth-form__submit-button"} type={"submit"}>
+        Sign in
+      </button>
+    </form>
+  );
+}

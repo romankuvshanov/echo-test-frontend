@@ -1,61 +1,54 @@
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 
 export default function PersonalAccountComponent({ name }) {
   const [hasError, setHasError] = useState(false);
+  const [userName, setUserName] = useState("Name");
+  const navigate = useNavigate();
   const { state } = useLocation();
+
   console.log(state);
-  let userName = "False";
 
   useEffect(() => {
-    userName = getUserNameByToken(state?.result?.token);
+    if (state) {
+      fetch("https://backend-front-test.dev.echo-company.ru/api/user", {
+        method: "GET",
+        headers: {
+          Authorization: state?.result?.token,
+        },
+      })
+        .then((response) => {
+          if (response.ok) return response.json();
+        })
+        .then((result) => {
+          console.log("RES" + result);
+          console.log(`${result?.first_name} ${result?.last_name}`);
+          setUserName(`${result?.first_name} ${result?.last_name}`);
+        })
+        .catch((error) => {
+          setHasError(true);
+        });
+    }
   }, [state]);
+
+  function handleClick() {
+    navigate("/");
+  }
 
   return (
     <div>
       <BlockContainerComponent>
-        <h1>Hello, {userName}!</h1>
-        <button>Exit</button>
+        {hasError ? (
+          <ErrorComponent></ErrorComponent>
+        ) : (
+          <h1>Hello, {userName}!</h1>
+        )}
+        <button onClick={handleClick}>Exit</button>
       </BlockContainerComponent>
     </div>
   );
 }
-
-function getUserNameByToken(token) {
-  fetch("https://backend-front-test.dev.echo-company.ru/api/user", {
-    method: "GET",
-    headers: {
-      Authorization: token,
-    },
-  })
-    .then((response) => {
-      if (response.ok) return response.json();
-    })
-    .then((result) => {
-      console.log("RES" + result);
-      console.log(`${result?.first_name} ${result?.last_name}`);
-      return `${result?.first_name} ${result?.last_name}`;
-    });
-}
-
-// async function getUserNameByToken(token) {
-//   let response = await fetch(
-//     "https://backend-front-test.dev.echo-company.ru/api/user",
-//     {
-//       method: "GET",
-//       headers: {
-//         Authorization: token,
-//       },
-//     }
-//   );
-//   if (response.ok) {
-//     let result = await response.json();
-//     console.log(result);
-//     console.log(`${result?.first_name} ${result?.last_name}`);
-//     return `${result?.first_name} ${result?.last_name}`;
-//   } else {
-//   }
-// }
 
 PersonalAccountComponent.defaultProps = { name: "Name" };
