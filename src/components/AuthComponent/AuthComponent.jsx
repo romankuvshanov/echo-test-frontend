@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import FormContainerComponent from "../reusableComponents/FormContainerComponent/FormContainerComponent";
+import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./AuthComponent.scss";
 
 export default function AuthComponent() {
   return (
-    <FormContainerComponent>
+    <BlockContainerComponent>
       <h1>Authorization</h1>
       <form className={"auth-form"}>
         <label htmlFor={"phone-input"}>Phone: </label>
@@ -29,9 +29,9 @@ export default function AuthComponent() {
         <Link to={"/reset"}>Forgot your password?</Link>
         <Link to={"/signup"}>Registration</Link>
         <button className={"auth-form__submit-button"} type={"submit"}>
-          Войти
+          Sign in
         </button>
       </form>
-    </FormContainerComponent>
+    </BlockContainerComponent>
   );
 }

@@ -1,11 +1,12 @@
-import FormContainerComponent from "../reusableComponents/FormContainerComponent/FormContainerComponent";
+import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import { Link } from "react-router-dom";
+import "./SignupComponent.scss";
 
 export default function SignupComponent() {
   return (
-    <FormContainerComponent>
+    <BlockContainerComponent>
       <h1>Registration</h1>
-      <form className={"auth-form"}>
+      <form className={"signup-form"}>
         <label htmlFor={"name-input"}>Name: </label>
         <input id={"name-input"} type={"text"} required={true} />
         <label htmlFor={"phone-input"}>Phone: </label>
@@ -20,16 +21,14 @@ export default function SignupComponent() {
         <label htmlFor={"password-input"}>Password: </label>
         <input id={"password-input"} type={"password"} required={true} />
         <label htmlFor={"profile-picture"}>Profile picture: </label>
-        <input
-          id={"profile-picture"}
-          type={"file"}
-          accept={"image/jpeg,image/png"}
-        />
-        <Link to={"/"}>Authorization</Link>
-        <button className={"auth-form__submit-button"} type={"submit"}>
+        <input id={"profile-picture"} type={"file"} accept={"image/*"} />
+        <Link className={"signup-form__first-link"} to={"/"}>
+          Authorization
+        </Link>
+        <button className={"signup-form__submit-button"} type={"submit"}>
           Sign up
         </button>
       </form>
-    </FormContainerComponent>
+    </BlockContainerComponent>
   );
 }

@@ -1,14 +1,14 @@
-.form {
+.signup-form {
   display: flex;
   flex-direction: column;
   row-gap: 5px;
 }
 
-.form__remember-me-input {
-  vertical-align: middle;
+.signup-form__first-link {
+  margin-top: 7px;
 }
 
-.form__submit-button {
+.signup-form__submit-button {
   margin-top: 15px;
   margin-bottom: 20px;
   &:hover {

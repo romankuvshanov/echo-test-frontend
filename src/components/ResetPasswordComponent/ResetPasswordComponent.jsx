@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import FormContainerComponent from "../reusableComponents/FormContainerComponent/FormContainerComponent";
+import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
+import "./ResetPasswordComponent.scss";
 
 export default function ResetPasswordComponent() {
   return (
-    <FormContainerComponent>
+    <BlockContainerComponent>
       <h1>Reset password</h1>
-      <form className={"auth-form"}>
+      <form className={"reset-password-form"}>
         <label htmlFor={"phone-input"}>Phone: </label>
         <input
           id={"phone-input"}
@@ -17,12 +18,17 @@ export default function ResetPasswordComponent() {
         />
         <label htmlFor={"password-input"}>One-time SMS password: </label>
         <input id={"password-input"} type={"text"} required={true} />
-        <Link to={"/"}>Remembered your password?</Link>
+        <Link className={"reset-password-form__first-link"} to={"/"}>
+          Remembered your password?
+        </Link>
         <Link to={"/signup"}>Registration</Link>
-        <button className={"auth-form__submit-button"} type={"submit"}>
-          Войти
+        <button
+          className={"reset-password-form__submit-button"}
+          type={"submit"}
+        >
+          Reset
         </button>
       </form>
-    </FormContainerComponent>
+    </BlockContainerComponent>
   );
 }
