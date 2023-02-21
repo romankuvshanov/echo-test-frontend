@@ -132,6 +132,7 @@ function ResetPasswordStartFormContent({
         required={true}
         value={phone}
         onChange={onPhoneInputChange}
+        autoFocus={true}
       />
       <button className={"reset-password-form__submit-button"} type={"submit"}>
         Send SMS with one-time password
@@ -161,6 +162,7 @@ function ResetPasswordEndFormContent({
         value={smsPassword}
         onChange={onSmsPasswordInputChange}
         required={true}
+        autoFocus={true}
       />
       <label htmlFor={"new-password-input"}>New password: </label>
       <input

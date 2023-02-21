@@ -66,6 +66,7 @@ function SignupFormContent({ onSubmit }) {
         name={"first_name"}
         type={"text"}
         required={true}
+        autoFocus={true}
       />
       <label htmlFor={"last_name-input"}>Last name: </label>
       <input

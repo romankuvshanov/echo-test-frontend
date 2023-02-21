@@ -75,6 +75,7 @@ function AuthFormContent({ onSubmit }) {
         maxLength={11}
         title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
+        autoFocus={true}
       />
       <label htmlFor={"password-input"}>Password: </label>
       <input
