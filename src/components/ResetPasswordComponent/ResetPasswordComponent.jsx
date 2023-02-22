@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
 import "./ResetPasswordComponent.scss";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
@@ -8,13 +8,17 @@ import { clear } from "../../features/token/tokenSlice";
 
 export default function ResetPasswordComponent() {
   const [errors, setErrors] = useState([]);
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+
   const [firstStepDoneSuccessfully, setFirstStepDoneSuccessfully] =
     useState(false);
   const [secondStepDoneSuccessfully, setSecondStepDoneSuccessfully] =
     useState(false);
+
   const [phone, setPhone] = useState("");
   const [smsPassword, setSmsPassword] = useState("");
   const [password, setPassword] = useState("");
+
   const dispatch = useDispatch();
   async function handleForgotStart(event) {
     event.preventDefault();
@@ -50,6 +54,7 @@ export default function ResetPasswordComponent() {
 
   async function handleForgotEnd(event) {
     event.preventDefault();
+    setSubmitButtonDisabled(true);
 
     try {
       let response = await fetch(
@@ -89,30 +94,32 @@ export default function ResetPasswordComponent() {
     <BlockContainerComponent>
       <h1>Reset password</h1>
 
-      {/*TODO: Сделать чище и понятнее*/}
       {errors.length ? (
         <ErrorComponent errors={errors}></ErrorComponent>
-      ) : firstStepDoneSuccessfully ? (
-        secondStepDoneSuccessfully ? (
-          <>
-            <p className={"password-changed"}>Password changed successfully</p>
-            <Link to={"/"}>Login</Link>
-          </>
-        ) : (
-          <ResetPasswordEndFormContent
-            smsPassword={smsPassword}
-            onSmsPasswordInputChange={(e) => setSmsPassword(e.target.value)}
-            password={password}
-            onPasswordInputChange={(e) => setPassword(e.target.value)}
-            handleForgotEnd={handleForgotEnd}
-          />
-        )
+      ) : secondStepDoneSuccessfully ? (
+        <>
+          <p className={"password-changed"}>Password changed successfully</p>
+          <Link to={"/"}>Login</Link>
+        </>
       ) : (
-        <ResetPasswordStartFormContent
-          phone={phone}
-          onPhoneInputChange={(e) => setPhone(e.target.value)}
-          handleForgotStart={handleForgotStart}
-        />
+        <>
+          <ResetPasswordStartFormContent
+            phone={phone}
+            onPhoneInputChange={(e) => setPhone(e.target.value)}
+            handleForgotStart={handleForgotStart}
+          />
+
+          {firstStepDoneSuccessfully && (
+            <ResetPasswordEndFormContent
+              smsPassword={smsPassword}
+              onSmsPasswordInputChange={(e) => setSmsPassword(e.target.value)}
+              password={password}
+              onPasswordInputChange={(e) => setPassword(e.target.value)}
+              handleForgotEnd={handleForgotEnd}
+              submitButtonDisabled={submitButtonDisabled}
+            />
+          )}
+        </>
       )}
     </BlockContainerComponent>
   );
@@ -123,10 +130,36 @@ function ResetPasswordStartFormContent({
   onPhoneInputChange,
   handleForgotStart,
 }) {
+  const [sendSmsButtonDisabled, setSendSmsButtonDisabled] = useState(false);
+  const [sendSmsButtonText, setSendSmsButtonText] = useState(
+    "Send SMS with one-time password"
+  );
+  const [secondsLeft, setSecondsLeft] = useState(0);
+
+  useEffect(() => {
+    if (secondsLeft > 0) {
+      const interval = setInterval(() => {
+        setSendSmsButtonText(
+          `You can send another sms after ${secondsLeft - 1} seconds`
+        );
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setSendSmsButtonDisabled(false);
+      setSendSmsButtonText("Send SMS with one-time password");
+    }
+  }, [secondsLeft]);
+
   return (
     <form
       className={"reset-password-form"}
-      onSubmit={(e) => handleForgotStart(e)}
+      onSubmit={(e) => {
+        setSendSmsButtonDisabled(true);
+        setSecondsLeft(20);
+        setSendSmsButtonText(`You can send another sms after 20 seconds`);
+        handleForgotStart(e);
+      }}
     >
       <label htmlFor={"phone-input"}>Enter your phone first: </label>
       <input
@@ -142,10 +175,13 @@ function ResetPasswordStartFormContent({
         onChange={onPhoneInputChange}
         autoFocus={true}
       />
-      <button className={"reset-password-form__submit-button"} type={"submit"}>
-        Send SMS with one-time password
+      <button
+        className={"reset-password-form__submit-button"}
+        type={"submit"}
+        disabled={sendSmsButtonDisabled}
+      >
+        {sendSmsButtonText}
       </button>
-      <FormLinks></FormLinks>
     </form>
   );
 }
@@ -156,6 +192,7 @@ function ResetPasswordEndFormContent({
   password,
   onPasswordInputChange,
   handleForgotEnd,
+  submitButtonDisabled,
 }) {
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -163,7 +200,9 @@ function ResetPasswordEndFormContent({
       className={"reset-password-form"}
       onSubmit={(e) => handleForgotEnd(e)}
     >
-      <p>The one-time sms password has been sent to your phone</p>
+      <p className={"reset-password-form__password-sent-message"}>
+        The one-time sms password has been sent to your phone
+      </p>
       <label htmlFor={"sms-password-input"}>One-time SMS password: </label>
       <input
         id={"sms-password-input"}
@@ -189,7 +228,11 @@ function ResetPasswordEndFormContent({
           onChange={() => setShowPassword(!showPassword)}
         />
       </label>
-      <button className={"reset-password-form__submit-button"} type={"submit"}>
+      <button
+        className={"reset-password-form__submit-button"}
+        type={"submit"}
+        disabled={submitButtonDisabled}
+      >
         Confirm
       </button>
       <FormLinks></FormLinks>
