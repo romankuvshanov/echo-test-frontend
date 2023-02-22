@@ -43,8 +43,6 @@ export default function PersonalAccountComponent() {
             }
           })
           .then((result) => {
-            console.log("RES" + result);
-            console.log(`${result?.first_name} ${result?.last_name}`);
             setUserName(`${result?.first_name} ${result?.last_name}`);
           })
           .catch((error) => {
