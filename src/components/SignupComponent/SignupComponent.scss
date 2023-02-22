@@ -10,8 +10,16 @@
 
 .signup-form__submit-button {
   margin-top: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   &:hover {
     cursor: pointer;
   }
+}
+
+.show-password-label {
+  font-weight: bold;
+  font-size: x-small;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -157,6 +157,7 @@ function ResetPasswordEndFormContent({
   onPasswordInputChange,
   handleForgotEnd,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <form
       className={"reset-password-form"}
@@ -175,11 +176,19 @@ function ResetPasswordEndFormContent({
       <label htmlFor={"new-password-input"}>New password: </label>
       <input
         id={"new-password-input"}
-        type={"password"}
+        type={showPassword ? "text" : "password"}
         value={password}
         onChange={onPasswordInputChange}
         required={true}
       />
+      <label className={"show-password-label"}>
+        Show password:
+        <input
+          type={"checkbox"}
+          value={showPassword}
+          onChange={() => setShowPassword(!showPassword)}
+        />
+      </label>
       <button className={"reset-password-form__submit-button"} type={"submit"}>
         Confirm
       </button>

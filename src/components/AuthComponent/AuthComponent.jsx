@@ -8,7 +8,6 @@ import { update } from "../../features/token/tokenSlice";
 
 export default function AuthComponent() {
   const [errors, setErrors] = useState([]);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   async function handleSubmit(event) {
@@ -59,17 +58,14 @@ export default function AuthComponent() {
       {errors.length ? (
         <ErrorComponent errors={errors}></ErrorComponent>
       ) : (
-        <AuthFormContent
-          onSubmit={handleSubmit}
-          showPassword={showPassword}
-          onShowPasswordChange={() => setShowPassword(!showPassword)}
-        ></AuthFormContent>
+        <AuthFormContent onSubmit={handleSubmit}></AuthFormContent>
       )}
     </BlockContainerComponent>
   );
 }
 
-function AuthFormContent({ onSubmit, showPassword, onShowPasswordChange }) {
+function AuthFormContent({ onSubmit }) {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
       <label htmlFor={"phone-input"}>Phone: </label>
@@ -97,7 +93,7 @@ function AuthFormContent({ onSubmit, showPassword, onShowPasswordChange }) {
         <input
           type={"checkbox"}
           value={showPassword}
-          onChange={onShowPasswordChange}
+          onChange={() => setShowPassword(!showPassword)}
         />
       </label>
       <button className={"auth-form__submit-button"} type={"submit"}>

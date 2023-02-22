@@ -62,6 +62,7 @@ export default function SignupComponent() {
 }
 
 function SignupFormContent({ onSubmit }) {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <form className={"signup-form"} onSubmit={onSubmit}>
       <label htmlFor={"first_name-input"}>First name: </label>
@@ -95,17 +96,25 @@ function SignupFormContent({ onSubmit }) {
       <input
         id={"password-input"}
         name={"password"}
-        type={"password"}
+        type={showPassword ? "text" : "password"}
         required={true}
       />
+      <label className={"show-password-label"}>
+        Show password:
+        <input
+          type={"checkbox"}
+          value={showPassword}
+          onChange={() => setShowPassword(!showPassword)}
+        />
+      </label>
       <label htmlFor={"profile-picture"}>Profile picture: </label>
       <input id={"profile-picture"} type={"file"} accept={"image/*"} />
-      <Link className={"signup-form__first-link"} to={"/"}>
-        Authorization
-      </Link>
       <button className={"signup-form__submit-button"} type={"submit"}>
         Sign up
       </button>
+      <Link className={"signup-form__first-link"} to={"/"}>
+        Authorization
+      </Link>
     </form>
   );
 }
