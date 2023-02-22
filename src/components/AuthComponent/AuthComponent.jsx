@@ -8,6 +8,7 @@ import { update } from "../../features/token/tokenSlice";
 
 export default function AuthComponent() {
   const [errors, setErrors] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   async function handleSubmit(event) {
@@ -31,7 +32,6 @@ export default function AuthComponent() {
 
       let result = await response.json();
       if (response.ok) {
-        //setErrors([]);
         if (formData.get("remember-me-input"))
           localStorage.setItem("token", result?.token);
         dispatch(update(result?.token));
@@ -59,13 +59,17 @@ export default function AuthComponent() {
       {errors.length ? (
         <ErrorComponent errors={errors}></ErrorComponent>
       ) : (
-        <AuthFormContent onSubmit={handleSubmit}></AuthFormContent>
+        <AuthFormContent
+          onSubmit={handleSubmit}
+          showPassword={showPassword}
+          onShowPasswordChange={() => setShowPassword(!showPassword)}
+        ></AuthFormContent>
       )}
     </BlockContainerComponent>
   );
 }
 
-function AuthFormContent({ onSubmit }) {
+function AuthFormContent({ onSubmit, showPassword, onShowPasswordChange }) {
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
       <label htmlFor={"phone-input"}>Phone: </label>
@@ -85,10 +89,21 @@ function AuthFormContent({ onSubmit }) {
       <input
         id={"password-input"}
         name={"password"}
-        type={"password"}
+        type={showPassword ? "text" : "password"}
         required={true}
       />
-      <div>
+      <label className={"show-password-label"}>
+        Show password:
+        <input
+          type={"checkbox"}
+          value={showPassword}
+          onChange={onShowPasswordChange}
+        />
+      </label>
+      <button className={"auth-form__submit-button"} type={"submit"}>
+        Sign in
+      </button>
+      <div className={"auth-form__remember-me-container"}>
         <label htmlFor={"remember-me-input"}>Remember me:</label>
         <input
           className={"auth-form__remember-me-input"}
@@ -99,9 +114,6 @@ function AuthFormContent({ onSubmit }) {
       </div>
       <Link to={"/reset"}>Forgot your password?</Link>
       <Link to={"/signup"}>Registration</Link>
-      <button className={"auth-form__submit-button"} type={"submit"}>
-        Sign in
-      </button>
     </form>
   );
 }

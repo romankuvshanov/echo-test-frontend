@@ -8,10 +8,23 @@
    vertical-align: middle;
 }
 
+.show-password-label {
+  font-weight: bold;
+  font-size: x-small;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .auth-form__submit-button {
-  margin-top: 15px;
-  margin-bottom: 20px;
+  margin-top: 3px;
+  margin-bottom: 0;
+  height: 25px;
   &:hover {
     cursor: pointer;
   }
+}
+
+.auth-form__remember-me-container {
+  margin-bottom: 15px;
 }
