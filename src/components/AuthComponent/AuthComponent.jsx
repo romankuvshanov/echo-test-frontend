@@ -8,10 +8,12 @@ import { update } from "../../features/token/tokenSlice";
 
 export default function AuthComponent() {
   const [errors, setErrors] = useState([]);
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   async function handleSubmit(event) {
     event.preventDefault();
+    setSubmitButtonDisabled(true);
 
     try {
       const formData = new FormData(event.target);
@@ -58,13 +60,16 @@ export default function AuthComponent() {
       {errors.length ? (
         <ErrorComponent errors={errors}></ErrorComponent>
       ) : (
-        <AuthFormContent onSubmit={handleSubmit}></AuthFormContent>
+        <AuthFormContent
+          onSubmit={handleSubmit}
+          submitButtonDisabled={submitButtonDisabled}
+        ></AuthFormContent>
       )}
     </BlockContainerComponent>
   );
 }
 
-function AuthFormContent({ onSubmit }) {
+function AuthFormContent({ onSubmit, submitButtonDisabled }) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
@@ -96,7 +101,11 @@ function AuthFormContent({ onSubmit }) {
           onChange={() => setShowPassword(!showPassword)}
         />
       </label>
-      <button className={"auth-form__submit-button"} type={"submit"}>
+      <button
+        className={"auth-form__submit-button"}
+        type={"submit"}
+        disabled={submitButtonDisabled}
+      >
         Sign in
       </button>
       <div className={"auth-form__remember-me-container"}>

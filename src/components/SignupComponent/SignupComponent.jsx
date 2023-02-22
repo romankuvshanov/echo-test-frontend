@@ -8,11 +8,13 @@ import "./SignupComponent.scss";
 
 export default function SignupComponent() {
   const [errors, setErrors] = useState([]);
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setSubmitButtonDisabled(true);
 
     try {
       const formData = new FormData(event.target);
@@ -55,13 +57,16 @@ export default function SignupComponent() {
       {errors.length ? (
         <ErrorComponent errors={errors}></ErrorComponent>
       ) : (
-        <SignupFormContent onSubmit={handleSubmit}></SignupFormContent>
+        <SignupFormContent
+          onSubmit={handleSubmit}
+          submitButtonDisabled={submitButtonDisabled}
+        ></SignupFormContent>
       )}
     </BlockContainerComponent>
   );
 }
 
-function SignupFormContent({ onSubmit }) {
+function SignupFormContent({ onSubmit, submitButtonDisabled }) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <form className={"signup-form"} onSubmit={onSubmit}>
@@ -109,7 +114,11 @@ function SignupFormContent({ onSubmit }) {
       </label>
       <label htmlFor={"profile-picture"}>Profile picture: </label>
       <input id={"profile-picture"} type={"file"} accept={"image/*"} />
-      <button className={"signup-form__submit-button"} type={"submit"}>
+      <button
+        className={"signup-form__submit-button"}
+        type={"submit"}
+        disabled={submitButtonDisabled}
+      >
         Sign up
       </button>
       <Link className={"signup-form__first-link"} to={"/"}>
