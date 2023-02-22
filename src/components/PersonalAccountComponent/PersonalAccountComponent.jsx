@@ -1,19 +1,16 @@
 import BlockContainerComponent from "../reusableComponents/BlockContainerComponent/BlockContainerComponent";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { clear, selectToken } from "../../features/token/tokenSlice";
 
-export default function PersonalAccountComponent({ name }) {
-  const [error, setError] = useState(null);
+export default function PersonalAccountComponent() {
+  const [errors, setErrors] = useState([]);
   const [userName, setUserName] = useState("Name");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
-  const { state } = useLocation();
-
-  console.log(token);
 
   useEffect(() => {
     try {
@@ -28,7 +25,19 @@ export default function PersonalAccountComponent({ name }) {
             if (response.ok) return response.json();
             else {
               response.json().then((result) => {
-                setError(new Error(result?.message));
+                let tempErrorsArray = (errors) => [
+                  ...errors,
+                  new Error(result?.message),
+                ];
+                if (result?.errors)
+                  result?.errors.forEach(
+                    (error) =>
+                      (tempErrorsArray = [
+                        ...tempErrorsArray,
+                        new Error(error?.msg),
+                      ])
+                  );
+                setErrors(tempErrorsArray);
                 return result;
               });
             }
@@ -37,14 +46,13 @@ export default function PersonalAccountComponent({ name }) {
             console.log("RES" + result);
             console.log(`${result?.first_name} ${result?.last_name}`);
             setUserName(`${result?.first_name} ${result?.last_name}`);
-            setError(null);
           })
           .catch((error) => {
-            setError(error);
+            setErrors((errors) => [...errors, error]);
           });
       }
     } catch (error) {
-      setError(error);
+      setErrors((errors) => [...errors, error]);
     }
   }, [token]);
 
@@ -56,18 +64,13 @@ export default function PersonalAccountComponent({ name }) {
   return (
     <div>
       <BlockContainerComponent>
-        {error ? (
-          <ErrorComponent error={error}></ErrorComponent>
+        {errors.length ? (
+          <ErrorComponent errors={errors}></ErrorComponent>
         ) : (
-          <>
-            <h1>Hello, {userName}!</h1>
-            {token && <p>{token}</p>}
-          </>
+          <h1>Hello, {userName}!</h1>
         )}
         <button onClick={handleClickExit}>Log out</button>
       </BlockContainerComponent>
     </div>
   );
 }
-
-PersonalAccountComponent.defaultProps = { name: "Name" };

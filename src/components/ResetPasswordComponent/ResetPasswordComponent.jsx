@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { clear } from "../../features/token/tokenSlice";
 
 export default function ResetPasswordComponent() {
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState([]);
   const [firstStepDoneSuccessfully, setFirstStepDoneSuccessfully] =
     useState(false);
   const [secondStepDoneSuccessfully, setSecondStepDoneSuccessfully] =
@@ -33,14 +33,18 @@ export default function ResetPasswordComponent() {
 
       let result = await response.json();
       if (response.ok) {
-        setError(null);
         setFirstStepDoneSuccessfully(true);
-        console.log(result);
       } else {
-        setError(new Error(result?.message));
+        let tempErrorsArray = [...errors, new Error(result?.message)];
+        if (result?.errors)
+          result?.errors.forEach(
+            (error) =>
+              (tempErrorsArray = [...tempErrorsArray, new Error(error?.msg)])
+          );
+        setErrors(tempErrorsArray);
       }
     } catch (error) {
-      setError(error);
+      setErrors([...errors, error]);
     }
   }
 
@@ -65,15 +69,19 @@ export default function ResetPasswordComponent() {
 
       let result = await response.json();
       if (response.ok) {
-        setError(null);
         setSecondStepDoneSuccessfully(true);
         dispatch(clear());
-        console.log(result);
       } else {
-        setError(new Error(result?.message));
+        let tempErrorsArray = [...errors, new Error(result?.message)];
+        if (result?.errors)
+          result?.errors.forEach(
+            (error) =>
+              (tempErrorsArray = [...tempErrorsArray, new Error(error?.msg)])
+          );
+        setErrors(tempErrorsArray);
       }
     } catch (error) {
-      setError(error);
+      setErrors([...errors, error]);
     }
   }
 
@@ -82,12 +90,12 @@ export default function ResetPasswordComponent() {
       <h1>Reset password</h1>
 
       {/*TODO: Сделать чище и понятнее*/}
-      {error ? (
-        <ErrorComponent error={error}></ErrorComponent>
+      {errors.length ? (
+        <ErrorComponent errors={errors}></ErrorComponent>
       ) : firstStepDoneSuccessfully ? (
         secondStepDoneSuccessfully ? (
           <>
-            <p>Password changed successfully</p>
+            <p className={"password-changed"}>Password changed successfully</p>
             <Link to={"/"}>Login</Link>
           </>
         ) : (

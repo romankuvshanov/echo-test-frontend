@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Echo test task",
+  "name": "Test task for the echo company",
   "icons": [
     {
       "src": "favicon.ico",

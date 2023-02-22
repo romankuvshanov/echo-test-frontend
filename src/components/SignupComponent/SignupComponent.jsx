@@ -7,7 +7,7 @@ import { update } from "../../features/token/tokenSlice";
 import "./SignupComponent.scss";
 
 export default function SignupComponent() {
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -30,26 +30,30 @@ export default function SignupComponent() {
 
       let result = await response.json();
       if (response.ok) {
-        setError(null);
         dispatch(update(result?.token));
-        console.log(result);
         navigate("/personal", {
           replace: true,
           state: { result: result },
         });
       } else {
-        setError(new Error(result?.message));
+        let tempErrorsArray = [...errors, new Error(result?.message)];
+        if (result?.errors)
+          result?.errors.forEach(
+            (error) =>
+              (tempErrorsArray = [...tempErrorsArray, new Error(error?.msg)])
+          );
+        setErrors(tempErrorsArray);
       }
     } catch (error) {
-      setError(error);
+      setErrors([...errors, error]);
     }
   }
 
   return (
     <BlockContainerComponent>
       <h1>Registration</h1>
-      {error ? (
-        <ErrorComponent error={error}></ErrorComponent>
+      {errors.length ? (
+        <ErrorComponent errors={errors}></ErrorComponent>
       ) : (
         <SignupFormContent onSubmit={handleSubmit}></SignupFormContent>
       )}
