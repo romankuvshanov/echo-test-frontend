@@ -4,7 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { update } from "../../features/token/tokenSlice";
+import { BACKEND_BASE_URL } from "../../common/constants";
 import "./SignupComponent.scss";
+import MaskedPhoneInput from "../reusableComponents/MaskedPhoneInput/MaskedPhoneInput";
 
 export default function SignupComponent() {
   const [errors, setErrors] = useState([]);
@@ -19,24 +21,23 @@ export default function SignupComponent() {
     try {
       const formData = new FormData(event.target);
       console.log(JSON.stringify(Object.fromEntries(formData)));
-      let response = await fetch(
-        "https://backend-front-test.dev.echo-company.ru/api/user/registration",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(Object.fromEntries(formData)),
-        }
-      );
+      let response = await fetch(`${BACKEND_BASE_URL}/api/user/registration`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: formData.get("phone").replace(/\D/g, ""),
+          password: formData.get("password"),
+          first_name: formData.get("first_name"),
+          last_name: formData.get("last_name"),
+        }),
+      });
 
       let result = await response.json();
       if (response.ok) {
         dispatch(update(result?.token));
-        navigate("/personal", {
-          replace: true,
-          state: { result: result },
-        });
+        navigate("/personal", { replace: true });
       } else {
         let tempErrorsArray = [...errors, new Error(result?.message)];
         if (result?.errors)
@@ -106,22 +107,17 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         }}
       />
       <label htmlFor={"phone-input"}>Phone: </label>
-      <input
+      <MaskedPhoneInput
         id={"phone-input"}
         name={"phone"}
-        type={"tel"}
-        placeholder={"79999999999"}
-        pattern={"7(\\d\\D*){10}"}
-        minLength={11}
-        maxLength={11}
-        title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
+        autoFocus={true}
         value={phone}
         onChange={(e) => {
           setPhone(e.target.value);
           localStorage.setItem("signup-form_phone", e.target.value);
         }}
-      />
+      ></MaskedPhoneInput>
       <label htmlFor={"password-input"}>Password: </label>
       <input
         id={"password-input"}
@@ -133,7 +129,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         Show password:
         <input
           type={"checkbox"}
-          value={showPassword}
+          checked={showPassword}
           onChange={() => setShowPassword(!showPassword)}
         />
       </label>
