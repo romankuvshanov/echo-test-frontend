@@ -73,7 +73,7 @@ function AuthFormContent({ onSubmit, submitButtonDisabled }) {
 
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
-      <label htmlFor={"phone-input"}>Phone: </label>
+      <label htmlFor={"phone-input"}>Phone:</label>
       <MaskedPhoneInput
         id={"phone-input"}
         name={"phone"}
@@ -85,7 +85,7 @@ function AuthFormContent({ onSubmit, submitButtonDisabled }) {
           localStorage.setItem("auth-form_phone", e.target.value);
         }}
       ></MaskedPhoneInput>
-      <label htmlFor={"password-input"}>Password: </label>
+      <label htmlFor={"password-input"}>Password:</label>
       <input
         id={"password-input"}
         name={"password"}

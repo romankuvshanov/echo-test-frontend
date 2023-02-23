@@ -20,7 +20,6 @@ export default function SignupComponent() {
 
     try {
       const formData = new FormData(event.target);
-      console.log(JSON.stringify(Object.fromEntries(formData)));
       let response = await fetch(`${BACKEND_BASE_URL}/api/user/registration`, {
         method: "POST",
         headers: {
@@ -81,7 +80,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
 
   return (
     <form className={"signup-form"} onSubmit={onSubmit}>
-      <label htmlFor={"first_name-input"}>First name: </label>
+      <label htmlFor={"first_name-input"}>First name:</label>
       <input
         id={"first_name-input"}
         name={"first_name"}
@@ -94,7 +93,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
           localStorage.setItem("signup-form_first-name", e.target.value);
         }}
       />
-      <label htmlFor={"last_name-input"}>Last name: </label>
+      <label htmlFor={"last_name-input"}>Last name:</label>
       <input
         id={"last_name-input"}
         name={"last_name"}
@@ -106,7 +105,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
           localStorage.setItem("signup-form_last-name", e.target.value);
         }}
       />
-      <label htmlFor={"phone-input"}>Phone: </label>
+      <label htmlFor={"phone-input"}>Phone:</label>
       <MaskedPhoneInput
         id={"phone-input"}
         name={"phone"}
@@ -118,7 +117,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
           localStorage.setItem("signup-form_phone", e.target.value);
         }}
       ></MaskedPhoneInput>
-      <label htmlFor={"password-input"}>Password: </label>
+      <label htmlFor={"password-input"}>Password:</label>
       <input
         id={"password-input"}
         name={"password"}

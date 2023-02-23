@@ -158,7 +158,7 @@ function ResetPasswordStartFormContent({
         handleForgotStart(e);
       }}
     >
-      <label htmlFor={"phone-input"}>Enter your phone first: </label>
+      <label htmlFor={"phone-input"}>Enter your phone first:</label>
       <MaskedPhoneInput
         id={"phone-input"}
         name={"phone-input"}
