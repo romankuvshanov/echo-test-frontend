@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { clear, selectToken } from "../../features/token/tokenSlice";
+import { BACKEND_BASE_URL } from "../../common/constants";
 
 export default function PersonalAccountComponent() {
   const [errors, setErrors] = useState([]);
@@ -15,7 +16,7 @@ export default function PersonalAccountComponent() {
   useEffect(() => {
     try {
       if (token) {
-        fetch("https://backend-front-test.dev.echo-company.ru/api/user", {
+        fetch(`${BACKEND_BASE_URL}/api/user`, {
           method: "GET",
           headers: {
             Authorization: token,

@@ -5,6 +5,8 @@ import "./ResetPasswordComponent.scss";
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 import { useDispatch } from "react-redux";
 import { clear } from "../../features/token/tokenSlice";
+import { BACKEND_BASE_URL } from "../../common/constants";
+import MaskedPhoneInput from "../reusableComponents/MaskedPhoneInput/MaskedPhoneInput";
 
 export default function ResetPasswordComponent() {
   const [errors, setErrors] = useState([]);
@@ -24,16 +26,13 @@ export default function ResetPasswordComponent() {
     event.preventDefault();
 
     try {
-      let response = await fetch(
-        "https://backend-front-test.dev.echo-company.ru/api/user/forgot-start",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ phone: phone }),
-        }
-      );
+      let response = await fetch(`${BACKEND_BASE_URL}/api/user/forgot-start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phone: phone.replace(/\D/g, "") }),
+      });
 
       let result = await response.json();
       if (response.ok) {
@@ -57,20 +56,17 @@ export default function ResetPasswordComponent() {
     setSubmitButtonDisabled(true);
 
     try {
-      let response = await fetch(
-        "https://backend-front-test.dev.echo-company.ru/api/user/forgot-end",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: phone,
-            code: smsPassword,
-            password: password,
-          }),
-        }
-      );
+      let response = await fetch(`${BACKEND_BASE_URL}/api/user/forgot-end`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phone.replace(/\D/g, ""),
+          code: smsPassword,
+          password: password,
+        }),
+      });
 
       let result = await response.json();
       if (response.ok) {
@@ -119,6 +115,7 @@ export default function ResetPasswordComponent() {
               submitButtonDisabled={submitButtonDisabled}
             />
           )}
+          <FormLinks></FormLinks>
         </>
       )}
     </BlockContainerComponent>
@@ -161,20 +158,15 @@ function ResetPasswordStartFormContent({
         handleForgotStart(e);
       }}
     >
-      <label htmlFor={"phone-input"}>Enter your phone first: </label>
-      <input
+      <label htmlFor={"phone-input"}>Enter your phone first:</label>
+      <MaskedPhoneInput
         id={"phone-input"}
-        type={"tel"}
-        placeholder={"79999999999"}
-        pattern={"7(\\d\\D*){10}"}
-        minLength={11}
-        maxLength={11}
-        title={"Enter the phone in the following format: 7xxxxxxxxxx"}
+        name={"phone-input"}
         required={true}
+        autoFocus={true}
         value={phone}
         onChange={onPhoneInputChange}
-        autoFocus={true}
-      />
+      ></MaskedPhoneInput>
       <button
         className={"reset-password-form__submit-button"}
         type={"submit"}
@@ -220,11 +212,11 @@ function ResetPasswordEndFormContent({
         onChange={onPasswordInputChange}
         required={true}
       />
-      <label className={"show-password-label"}>
+      <label className={"reset-password-form__show-password-label"}>
         Show password:
         <input
           type={"checkbox"}
-          value={showPassword}
+          checked={showPassword}
           onChange={() => setShowPassword(!showPassword)}
         />
       </label>
@@ -235,7 +227,6 @@ function ResetPasswordEndFormContent({
       >
         Confirm
       </button>
-      <FormLinks></FormLinks>
     </form>
   );
 }

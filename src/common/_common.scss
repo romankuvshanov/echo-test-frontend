@@ -1,0 +1,13 @@
+@mixin form-flex {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+@mixin show-password-label {
+  font-weight: bold;
+  font-size: x-small;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

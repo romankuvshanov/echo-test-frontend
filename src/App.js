@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import AuthComponent from "./components/AuthComponent/AuthComponent.jsx";
 import PersonalAccountComponent from "./components/PersonalAccountComponent/PersonalAccountComponent.jsx";

@@ -5,6 +5,8 @@ import BlockContainerComponent from "../reusableComponents/BlockContainerCompone
 import ErrorComponent from "../reusableComponents/ErrorComponent/ErrorComponent";
 import { useDispatch } from "react-redux";
 import { update } from "../../features/token/tokenSlice";
+import { BACKEND_BASE_URL } from "../../common/constants";
+import MaskedPhoneInput from "../reusableComponents/MaskedPhoneInput/MaskedPhoneInput";
 
 export default function AuthComponent() {
   const [errors, setErrors] = useState([]);
@@ -17,29 +19,23 @@ export default function AuthComponent() {
 
     try {
       const formData = new FormData(event.target);
-      let response = await fetch(
-        "https://backend-front-test.dev.echo-company.ru/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: formData.get("phone"),
-            password: formData.get("password"),
-          }),
-        }
-      );
+      let response = await fetch(`${BACKEND_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: formData.get("phone").replace(/\D/g, ""),
+          password: formData.get("password"),
+        }),
+      });
 
       let result = await response.json();
       if (response.ok) {
         if (formData.get("remember-me-input"))
           localStorage.setItem("token", result?.token);
         dispatch(update(result?.token));
-        navigate("/personal", {
-          replace: true,
-          state: { result: result },
-        });
+        navigate("/personal", { replace: true });
       } else {
         let tempErrorsArray = [...errors, new Error(result?.message)];
         if (result?.errors)
@@ -71,33 +67,36 @@ export default function AuthComponent() {
 
 function AuthFormContent({ onSubmit, submitButtonDisabled }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState(
+    localStorage.getItem("auth-form_phone") || ""
+  );
+
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
-      <label htmlFor={"phone-input"}>Phone: </label>
-      <input
+      <label htmlFor={"phone-input"}>Phone:</label>
+      <MaskedPhoneInput
         id={"phone-input"}
         name={"phone"}
-        type={"tel"}
-        placeholder={"79999999999"}
-        pattern={"7(\\d\\D*){10}"}
-        minLength={11}
-        maxLength={11}
-        title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
         autoFocus={true}
-      />
-      <label htmlFor={"password-input"}>Password: </label>
+        value={phone}
+        onChange={(e) => {
+          setPhone(e.target.value);
+          localStorage.setItem("auth-form_phone", e.target.value);
+        }}
+      ></MaskedPhoneInput>
+      <label htmlFor={"password-input"}>Password:</label>
       <input
         id={"password-input"}
         name={"password"}
         type={showPassword ? "text" : "password"}
         required={true}
       />
-      <label className={"show-password-label"}>
+      <label className={"auth-form__show-password-label"}>
         Show password:
         <input
           type={"checkbox"}
-          value={showPassword}
+          checked={showPassword}
           onChange={() => setShowPassword(!showPassword)}
         />
       </label>

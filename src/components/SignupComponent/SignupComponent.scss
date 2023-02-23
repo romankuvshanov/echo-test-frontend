@@ -1,7 +1,7 @@
+@import "src/common/_common";
+
 .signup-form {
-  display: flex;
-  flex-direction: column;
-  row-gap: 5px;
+  @include form-flex();
 }
 
 .signup-form__first-link {
@@ -16,10 +16,6 @@
   }
 }
 
-.show-password-label {
-  font-weight: bold;
-  font-size: x-small;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.signup-form__show-password-label {
+  @include show-password-label();
 }
