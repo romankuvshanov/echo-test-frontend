@@ -68,6 +68,16 @@ export default function SignupComponent() {
 
 function SignupFormContent({ onSubmit, submitButtonDisabled }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [firstName, setFirstName] = useState(
+    localStorage.getItem("signup-form_first-name") || ""
+  );
+  const [lastName, setLastName] = useState(
+    localStorage.getItem("signup-form_last-name") || ""
+  );
+  const [phone, setPhone] = useState(
+    localStorage.getItem("signup-form_phone") || ""
+  );
+
   return (
     <form className={"signup-form"} onSubmit={onSubmit}>
       <label htmlFor={"first_name-input"}>First name: </label>
@@ -77,6 +87,11 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         type={"text"}
         required={true}
         autoFocus={true}
+        value={firstName}
+        onChange={(e) => {
+          setFirstName(e.target.value);
+          localStorage.setItem("signup-form_first-name", e.target.value);
+        }}
       />
       <label htmlFor={"last_name-input"}>Last name: </label>
       <input
@@ -84,6 +99,11 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         name={"last_name"}
         type={"text"}
         required={true}
+        value={lastName}
+        onChange={(e) => {
+          setLastName(e.target.value);
+          localStorage.setItem("signup-form_last-name", e.target.value);
+        }}
       />
       <label htmlFor={"phone-input"}>Phone: </label>
       <input
@@ -96,6 +116,11 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         maxLength={11}
         title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
+        value={phone}
+        onChange={(e) => {
+          setPhone(e.target.value);
+          localStorage.setItem("signup-form_phone", e.target.value);
+        }}
       />
       <label htmlFor={"password-input"}>Password: </label>
       <input

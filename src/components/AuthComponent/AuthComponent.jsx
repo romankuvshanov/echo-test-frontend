@@ -71,6 +71,10 @@ export default function AuthComponent() {
 
 function AuthFormContent({ onSubmit, submitButtonDisabled }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState(
+    localStorage.getItem("auth-form_phone") || ""
+  );
+
   return (
     <form className={"auth-form"} onSubmit={onSubmit}>
       <label htmlFor={"phone-input"}>Phone: </label>
@@ -85,6 +89,11 @@ function AuthFormContent({ onSubmit, submitButtonDisabled }) {
         title={"Enter the phone in the following format: 7xxxxxxxxxx"}
         required={true}
         autoFocus={true}
+        value={phone}
+        onChange={(e) => {
+          setPhone(e.target.value);
+          localStorage.setItem("auth-form_phone", e.target.value);
+        }}
       />
       <label htmlFor={"password-input"}>Password: </label>
       <input
