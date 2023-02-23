@@ -212,7 +212,7 @@ function ResetPasswordEndFormContent({
         onChange={onPasswordInputChange}
         required={true}
       />
-      <label className={"show-password-label"}>
+      <label className={"reset-password-form__show-password-label"}>
         Show password:
         <input
           type={"checkbox"}

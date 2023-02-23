@@ -125,7 +125,7 @@ function SignupFormContent({ onSubmit, submitButtonDisabled }) {
         type={showPassword ? "text" : "password"}
         required={true}
       />
-      <label className={"show-password-label"}>
+      <label className={"signup-form__show-password-label"}>
         Show password:
         <input
           type={"checkbox"}

@@ -92,7 +92,7 @@ function AuthFormContent({ onSubmit, submitButtonDisabled }) {
         type={showPassword ? "text" : "password"}
         required={true}
       />
-      <label className={"show-password-label"}>
+      <label className={"auth-form__show-password-label"}>
         Show password:
         <input
           type={"checkbox"}
