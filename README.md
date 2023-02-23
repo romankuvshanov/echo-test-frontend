@@ -43,10 +43,6 @@ It was made with **react, react router and redux.** [Live demo](https://echo-tes
 
 In the project directory, you can run:
 
-### `npm install`
-
-Runs the setup for further development.
-
 ### `npm start`
 
 Runs the app in the development mode.\
