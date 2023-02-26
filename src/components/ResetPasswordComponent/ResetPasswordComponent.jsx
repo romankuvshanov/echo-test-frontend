@@ -86,18 +86,19 @@ export default function ResetPasswordComponent() {
     }
   }
 
-  return (
-    <BlockContainerComponent>
-      <h1>Reset password</h1>
-
-      {errors.length ? (
-        <ErrorComponent errors={errors}></ErrorComponent>
-      ) : secondStepDoneSuccessfully ? (
+  let outputJSX;
+  if (errors.length) {
+    outputJSX = <ErrorComponent errors={errors}></ErrorComponent>;
+  } else {
+    if (secondStepDoneSuccessfully) {
+      outputJSX = (
         <>
           <p className={"password-changed"}>Password changed successfully</p>
           <Link to={"/"}>Login</Link>
         </>
-      ) : (
+      );
+    } else {
+      outputJSX = (
         <>
           <ResetPasswordStartFormContent
             phone={phone}
@@ -117,7 +118,14 @@ export default function ResetPasswordComponent() {
           )}
           <FormLinks></FormLinks>
         </>
-      )}
+      );
+    }
+  }
+
+  return (
+    <BlockContainerComponent>
+      <h1>Reset password</h1>
+      {outputJSX}
     </BlockContainerComponent>
   );
 }
